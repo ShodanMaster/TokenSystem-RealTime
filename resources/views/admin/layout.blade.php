@@ -21,10 +21,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link text-white" aria-current="page" href="">Counter</a>
+                        <a class="nav-link {{ Route::is('admin.counter') ? 'active' : '' }} text-white" aria-current="page" href="{{route('admin.counter')}}">Counter</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link  text-white" aria-current="page" href="">Reports</a>
+                        <a class="nav-link text-white" aria-current="page" href="">Reports</a>
                     </li>
 
                 </ul>

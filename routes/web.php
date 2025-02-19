@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\CounterController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +26,13 @@ Route::post('logging-in', [LoginController::class, 'loggingIn'])->name('loggingi
 
 Route::middleware('auth:web')->prefix('admin')->name('admin.')->group(function(){
     Route::get('', [AdminController::class, 'index'])->name('index');
+
+    Route::get('counter', [CounterController::class, 'index'])->name('counter');
+    Route::get('create-counter', [CounterController::class, 'createCounter'])->name('createcounter');
+    Route::post('update-status', [CounterController::class, 'updateStatus'])->name('updatestatus');
+
+    Route::get('report', [ReportController::class, 'index'])->name('report');
+    Route::get('detailed-report/{id}', [ReportController::class, 'detailedReport'])->name('detailedreport');
 
     Route::get('logging-out', [LoginController::class, 'loggingOut'])->name('loggingout');
 
