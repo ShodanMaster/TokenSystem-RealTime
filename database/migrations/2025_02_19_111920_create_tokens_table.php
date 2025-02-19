@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('tokens', function (Blueprint $table) {
             $table->id();
+            $table->integer('total_token')->default(0);
+            $table->integer('last_went')->default(0);
+            $table->integer('token_left')->default(0);
+            $table->date('date')->default(DB::raw('CURRENT_DATE'));
             $table->timestamps();
         });
     }

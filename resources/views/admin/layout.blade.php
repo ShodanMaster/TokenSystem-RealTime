@@ -24,7 +24,7 @@
                         <a class="nav-link {{ Route::is('admin.counter') ? 'active' : '' }} text-white" aria-current="page" href="{{route('admin.counter')}}">Counter</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" aria-current="page" href="">Reports</a>
+                        <a class="nav-link {{ Route::is('admin.report') ? 'active' : '' }} text-white" aria-current="page" href="{{route('admin.report')}}">Reports</a>
                     </li>
 
                 </ul>
