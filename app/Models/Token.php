@@ -11,4 +11,8 @@ class Token extends Model
 
     protected $guarded = [];
 
+    public function counters(){
+        return $this->belongsToMany(Counter::class)->withPivot('last_went')->withTimestamps();
+    }
+
 }

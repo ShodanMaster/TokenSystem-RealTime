@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('counter_id')->constrained()->onDelete('cascade');
             $table->foreignId('token_id')->constrained()->onDelete('cascade');
+            $table->integer('last_went')->default(0);
             $table->timestamps();
         });
     }

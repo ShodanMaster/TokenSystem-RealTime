@@ -49,10 +49,12 @@
             contentType: false,
             processData: false,
             success: function (response) {
+                console.log(response);
+
                 if (response.status === 200) {
                     $('#tokenForm')[0].reset();
                     // Update UI with the total tokens and token left
-                    updateTokenDisplay(response.data.total, response.data.last_went);
+                    updateTokenDisplay(response.data.total, response.data.token_number, response.data.total_left);
                 }
             },
             error: function(xhr, status, error) {
@@ -62,11 +64,11 @@
             }
         });
 
-        function updateTokenDisplay(total, last_went) {
+        function updateTokenDisplay(total, token_number, token_left) {
 
             $('#totalTokens').text(total);
-            $('#lastWent').text(last_went);
-            $('#tokenLeft').text(total-last_went);
+            $('#lastWent').text(token_number);
+            $('#tokenLeft').text(token_left);
         }
     });
     </script>

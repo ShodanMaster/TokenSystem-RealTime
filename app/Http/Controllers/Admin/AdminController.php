@@ -7,6 +7,7 @@ use App\Models\Token;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -21,27 +22,35 @@ class AdminController extends Controller
         ]);
         try{
             $lastToken = Token::whereDate('date', today())->latest()->first();
-
+            $trueTokens = Token::whereDate('date', today())->where('status', true)->count();
+            // dd($pendingTokens);
+            $totalTokens = Token::whereDate('date', today())->count();
+            // dd('trueTokens: '. $trueTokens, 'totalTokens: '.$totalTokens);
+            // dd($tokensLeft);
             if (!$lastToken) {
-                $totalToken = 0;
-                $tokenLeft = 0;
+                $tokenNumber = 0;
             } else {
-                $totalToken = $lastToken->total_token;
-                $tokenLeft = $lastToken->token_left;
+                $tokenNumber = $lastToken->token_number;
             }
 
             $token = Token::create([
                 'name' => $request->name,
-                'total_token' => $totalToken + 1, // Increment the total_token value
-                'token_left' => $tokenLeft + 1,  // Increment the token_left value
+                'token_number' => $tokenNumber + 1
             ]);
 
+
+            $totalTokens = Token::whereDate('date', today())->count();
+            $tokensLeft = $totalTokens - $trueTokens;
+            // dd($tokensLeft);
+            $lastWent = DB::table('counter_token')->latest()->first();
+            // dd($lastWent);
             return response()->json([
                 'status' => 200,
                 'message' => 'Tokens Added',
                 'data' => [
-                    'total' => $token->total_token,
-                    'last_went' => $token->last_went ?? 0,
+                    'total' => $totalTokens ?? 0,
+                    'token_number' => $lastWent->last_went ?? 0,
+                    'total_left' => $tokensLeft,
                 ]
             ]);
         } catch (Exception $e) {

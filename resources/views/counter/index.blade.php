@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="{{asset('cropper/cropper.min.css')}}">
     <link rel="stylesheet" href="{{asset('bootstrap/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('sweetalert/sweetalert2.min.css')}}">
-
 </head>
 <body>
     <div class="container mt-5">
@@ -39,12 +38,47 @@
             </div>
         </div>
     </div>
+
 <script src="{{asset('js/jquery-3.6.0.min.js')}}"></script>
 <script src="{{asset('cropper/cropper.min.js')}}"></script>
 <script src="{{asset('bootstrap/bootstrap.bundle.min.js')}}"></script>
 <script src="{{asset('sweetalert/sweetalert2.min.js')}}"></script>
-<script>
 
+<script>
+    $(document).on('click', '#getToken', function (e) {
+        e.preventDefault();
+
+        var counterId = "{{ encrypt(Auth::guard('counter')->user()->id) }}"; // Get the counter ID dynamically from the session or user
+        var tokenLabel = "#counterToken"; // Get the corresponding token label
+
+        $.ajax({
+            type: "GET",
+            url: "{{route('counter.gettoken', ':id')}}".replace(':id', counterId),  // Replace counter ID dynamically in URL
+            success: function (response) {
+                console.log(response);
+
+                if (response.status === 200) {
+                    // Update the HTML elements with the new token data
+                    $('#totalTokenIssued').text(response.data.total);
+                    $('#tokensLeft').text(response.data.token_left);
+                    $(tokenLabel).text("Token #" + response.data.last_went);
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle error if no tokens are available
+                $('#tokensLeft').text('0');
+                $(tokenLabel).text("Token #0");
+                var errorResponse = JSON.parse(xhr.responseText);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: errorResponse.message,
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
 </script>
+
 </body>
 </html>

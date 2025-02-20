@@ -12,6 +12,6 @@ class Counter extends Authenticatable
     protected $guarded = [];
 
     public function tokens(){
-        return $this->hasMany(CounterToken::class);
+        return $this->belongsToMany(Token::class)->withPivot('last_went')->withTimestamps();
     }
 }
