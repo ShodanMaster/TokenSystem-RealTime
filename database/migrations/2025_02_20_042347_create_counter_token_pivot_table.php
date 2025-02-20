@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('counter_tokens', function (Blueprint $table) {
+        Schema::create('counter_token', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('counter_id')->constrained('counters');
-            $table->integer('token_number');
+            $table->foreignId('counter_id')->constrained()->onDelete('cascade');
+            $table->foreignId('token_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('counter_tokens');
+        Schema::dropIfExists('counter_token_pivot');
     }
 };
