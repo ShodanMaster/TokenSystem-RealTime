@@ -1,31 +1,34 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Counter;
 
 use App\Http\Controllers\Controller;
-use App\Models\CounterToken;
 use App\Models\Token;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
     public function index(){
-        $reports = Token::latest()
+        $reports = Token::whereHas('counters', function ($query) {
+                $query->where('counter_id', Auth::guard('counter')->user()->id);
+            })
+            ->latest()
             ->get()
             ->groupBy('date') // Group by the date column
             ->map(function($groupedTokens) {
                 return (object)[
                     'date' => $groupedTokens->first()->date, // Get the date for the group
                     'total' => $groupedTokens->count(), // Total count of tokens for that date
-                    'token_left' => $groupedTokens->where('status', false)->count(), // Count tokens where 'true' is false
                     'id' => $groupedTokens->first()->date // Include an ID for detailed report
                 ];
             });
+
             // dd($reports);
 
-        return view('admin.report.index', compact('reports'));
+        return view('counter.report.index', compact('reports'));
     }
 
     public function detailedReport($date){
@@ -35,12 +38,14 @@ class ReportController extends Controller
             $startOfDay = Carbon::parse($date)->startOfDay();
             $endOfDay = Carbon::parse($date)->endOfDay();
 
-            $tokens = Token::whereBetween('created_at', [$startOfDay, $endOfDay])
+            $tokens = Token::whereHas('counters', function ($query) {
+                $query->where('counter_id', Auth::guard('counter')->user()->id);
+            })->whereBetween('created_at', [$startOfDay, $endOfDay])
                         ->latest()
                         ->get();
             // dd($tokens);
             if ($tokens) {
-                return view('admin.report.detailedreport', compact('tokens', 'date'));
+                return view('counter.report.detailedreport', compact('tokens', 'date'));
             } else {
                 return redirect()->back()->with('error', 'Details Not Found');
             }

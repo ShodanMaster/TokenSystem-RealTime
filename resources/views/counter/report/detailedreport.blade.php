@@ -1,4 +1,4 @@
-@extends('admin.layout')
+@extends('counter.layout')
 @section('content')
 <div class="card shadow-lg">
     <div class="card-header bg-info text-white fs-4 text-center">
@@ -11,13 +11,6 @@
                 <div class="card shadow-sm p-3 text-center">
                     <h5>Total Tokens</h5>
                     <p class="fs-3">{{ count($tokens) }}</p>
-                </div>
-            </div>
-            <div class="col-md-6 mb-3">
-                    <div class="card shadow-sm p-3 text-center">
-                        <h5>Total Left</h5>
-                        <p class="fs-3">{{ count($tokens->filter(function($t) { return $t->status === 0; })) }}</p>
-                    </div>
                 </div>
             </div>
         </div>

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Counter\CounterController as CounterCounterController;
+use App\Http\Controllers\Counter\ReportController as CounterReportController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,7 +37,7 @@ Route::middleware('auth:web')->prefix('admin')->name('admin.')->group(function()
     Route::post('update-status', [CounterController::class, 'updateStatus'])->name('updatestatus');
 
     Route::get('report', [ReportController::class, 'index'])->name('report');
-    Route::get('detailed-report/{id}', [ReportController::class, 'detailedReport'])->name('detailedreport');
+    Route::get('detailed-report/{date}', [ReportController::class, 'detailedReport'])->name('detailedreport');
 
     Route::get('logging-out', [LoginController::class, 'loggingOut'])->name('loggingout');
 
@@ -47,6 +48,9 @@ Route::middleware(['auth:counter', 'counterclosed'])->prefix('counter')->name('c
     Route::get('window-load', [CounterCounterController::class, 'windowLoad'])->name('windowload');
 
     Route::get('get-token/{id}', [CounterCounterController::class, 'getToken'])->name('gettoken');
+
+    Route::get('report', [CounterReportController::class, 'index'])->name('report');
+    Route::get('detailed-report/{date}', [CounterReportController::class, 'detailedReport'])->name('detailedreport');
 
     Route::get('logging-out', [LoginController::class, 'loggingOut'])->name('loggingout');
 });
