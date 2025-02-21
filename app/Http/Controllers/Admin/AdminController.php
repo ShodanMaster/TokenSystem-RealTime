@@ -42,7 +42,7 @@ class AdminController extends Controller
             $totalTokens = Token::whereDate('date', today())->count();
             $tokensLeft = $totalTokens - $trueTokens;
             // dd($tokensLeft);
-            $lastWent = DB::table('counter_token')->latest()->first();
+            $lastWent = DB::table('counter_token')->where('created_at', today())->latest()->first();
             // dd($lastWent);
             return response()->json([
                 'status' => 200,
@@ -59,5 +59,24 @@ class AdminController extends Controller
                 'message' => 'An error occurred: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function windowLoad(){
+        $trueTokens = Token::whereDate('date', today())->where('status', true)->count();
+        $totalTokens = Token::whereDate('date', today())->count();
+        $lastWent = DB::table('counter_token')->whereDate('created_at', Carbon::today())->latest()->first();
+        // dd($lastWent);
+        $tokensLeft = $totalTokens - $trueTokens;
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Tokens Added',
+            'data' => [
+                'total' => $totalTokens ?? 0,
+                'token_number' => $lastWent->last_went ?? 0,
+                'total_left' => $tokensLeft,
+            ]
+        ]);
+
     }
 }

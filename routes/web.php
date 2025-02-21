@@ -27,6 +27,7 @@ Route::post('logging-in', [LoginController::class, 'loggingIn'])->name('loggingi
 
 Route::middleware('auth:web')->prefix('admin')->name('admin.')->group(function(){
     Route::get('', [AdminController::class, 'index'])->name('index');
+    Route::get('window-load', [AdminController::class, 'windowLoad'])->name('windowload');
 
     Route::post('add-token', [AdminController::class, 'addToken'])->name('addtoken');
 

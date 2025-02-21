@@ -30,46 +30,62 @@
 @endsection
 @section('scripts')
     <script>
-        $(document).on('submit', '#tokenForm', function (e) {
-        e.preventDefault();
 
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
+        $(document).ready(function () {
 
-        var formData = new FormData(this);
-
-        $.ajax({
-            type: "POST",
-            url: "{{route('admin.addtoken')}}",
-            data: formData,
-            dataType: "json",
-            contentType: false,
-            processData: false,
-            success: function (response) {
-                console.log(response);
-
-                if (response.status === 200) {
-                    $('#tokenForm')[0].reset();
-                    // Update UI with the total tokens and token left
+            $.ajax({
+                type: "GET",
+                url: "{{route('admin.windowload')}}",
+                success: function (response) {
                     updateTokenDisplay(response.data.total, response.data.token_number, response.data.total_left);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle errors such as network issues, or invalid response
-                console.error("Error: " + error);
-                alert('An error occurred: ' + error);
+            });
+
+            $(document).on('submit', '#tokenForm', function (e) {
+                e.preventDefault();
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                var formData = new FormData(this);
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{route('admin.addtoken')}}",
+                    data: formData,
+                    dataType: "json",
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        // console.log(response);
+
+                        if (response.status === 200) {
+                            $('#tokenForm')[0].reset();
+                            // Update UI with the total tokens and token left
+                            updateTokenDisplay(response.data.total, response.data.token_number, response.data.total_left);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors such as network issues, or invalid response
+                        console.error("Error: " + error);
+                        alert('An error occurred: ' + error);
+                    }
+                });
+
+            });
+
+            function updateTokenDisplay(total, token_number, token_left) {
+
+                $('#totalTokens').text(total);
+                $('#lastWent').text(token_number);
+                $('#tokenLeft').text(token_left);
+
             }
+
         });
 
-        function updateTokenDisplay(total, token_number, token_left) {
-
-            $('#totalTokens').text(total);
-            $('#lastWent').text(token_number);
-            $('#tokenLeft').text(token_left);
-        }
-    });
     </script>
 @endsection
