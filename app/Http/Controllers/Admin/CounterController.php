@@ -6,12 +6,33 @@ use App\Http\Controllers\Controller;
 use App\Models\Counter;
 use Exception;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class CounterController extends Controller
 {
     public function index(){
-        $counters = Counter::all();
-        return view('admin.counter.index', compact('counters'));
+        // $counters = Counter::all();
+        return view('admin.counter.index');
+    }
+
+    public function getCounters(Request $request){
+        $counters = Counter::select('id', 'name', 'closed');
+
+        if($request->ajax()){
+            return DataTables::of($counters)
+                ->addIndexColumn()
+                ->addColumn('action', function($counter){
+                    $btnClass = $counter->closed ? 'btn-danger' : 'btn-success';
+                    $statusText = $counter->closed ? 'CLOSED' : 'OPEN';
+                    return '<span class="btn btn-sm ' . $btnClass . ' rounded"
+                                  id="statusButton"
+                                  data-closed="' . $counter->closed . '"
+                                  data-counter-id="' . encrypt($counter->id) . '">  <!-- Store counter ID here -->
+                                ' . $statusText . '
+                              </span>';
+                })
+                ->make(true);
+        }
     }
 
     public function createCounter(){

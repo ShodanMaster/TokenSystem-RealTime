@@ -33,6 +33,7 @@ Route::middleware('auth:web')->prefix('admin')->name('admin.')->group(function()
     Route::post('add-token', [AdminController::class, 'addToken'])->name('addtoken');
 
     Route::get('counter', [CounterController::class, 'index'])->name('counter');
+    Route::get('get-counters', [CounterController::class, 'getCounters'])->name('getcounters');
     Route::get('create-counter', [CounterController::class, 'createCounter'])->name('createcounter');
     Route::post('update-status', [CounterController::class, 'updateStatus'])->name('updatestatus');
 

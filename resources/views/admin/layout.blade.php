@@ -8,6 +8,7 @@
     <title>Document</title>
     <link rel="stylesheet" href="{{asset('bootstrap/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('sweetalert/sweetalert2.min.css')}}">
+    <link rel="stylesheet" href="{{asset('datatable/dataTables.dataTables.min.css')}}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 </head>
@@ -41,6 +42,7 @@
         @yield('content')
     </div>
     <script src="{{asset('js/jquery-3.6.0.min.js')}}"></script>
+    <script src="{{asset('datatable/dataTables.min.js')}}"></script>
     <script src="{{asset('bootstrap/bootstrap.bundle.min.js')}}"></script>
     <script src="{{asset('sweetalert/sweetalert2.min.js')}}"></script>
     @yield('scripts')

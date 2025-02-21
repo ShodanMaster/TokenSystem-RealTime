@@ -9,13 +9,12 @@
         </button>
     </div>
     <div class="card-body">
-        <table class="table table-striped">
+        {{-- <table class="table table-striped">
             <thead>
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Counter</th>
                     <th scope="col">Open/Close</th>
-                    {{-- <th scope="col">Action</th> --}}
                 </tr>
             </thead>
             <tbody>
@@ -35,134 +34,165 @@
                                 @endif
                             </span>
                         </td>
-                        {{-- <td>
-                            <button type="button" class="btn btn-danger" id="deleteCounter" data-counter-id="{{ encrypt($counter->id) }}">Delete</button>
-                        </td> --}}
                     </tr>
                 @empty
                     <tr><td class="text-center text-muted" colspan="3">No Counters</td></tr>
                 @endforelse
             </tbody>
+        </table> --}}
+
+        <table class="table table-striped" id="counterTable">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Counter</th>
+                    <th scope="col">Open/Close</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
         </table>
+
     </div>
 </div>
 @endsection
 @section('scripts')
     <script>
-        $(document).on('click', '#addCounter',function (e) {
-            e.preventDefault();
 
-            Swal.fire({
-                title: 'Create Counter',
-                text: 'Do you want to Create Counter?',
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, create.',
-                cancelButtonText: 'No, cancel!',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: "GET",
-                        url: "{{ route('admin.createcounter') }}",
-                        success: function(response) {
-                            if (response.status == 200) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Created',
-                                    text: response.message,
-                                    confirmButtonText: 'OK'
-                                }).then(function() {
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: response.message,
-                                    confirmButtonText: 'OK'
-                                }).then(function() {
-                                    location.reload();
-                                });
-                            }
-                        },
-
-                        error: function(xhr, status, error) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: 'Something went wrong. Please try again.',
-                                confirmButtonText: 'OK'
-                            });
-                        }
-                    });
+        $(document).ready(function () {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-        });
 
-        $(document).on('click', '#statusButton', function (e) {
-            e.preventDefault();
-            var button = $(this);
-            var counterId = button.data('counter-id');
-            var currentStatus = button.data('closed');  // Get the current status (open/closed)
+            var table = $('#counterTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{route('admin.getcounters')}}",
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    {data : 'name'},
+                    { data: 'action', name: 'action', orderable: false, searchable: false }
+                ],
+            });
 
-            // Determine the new status by toggling the current status
-            var newStatus = currentStatus ? 0 : 1;
 
-            console.log('Counter ID:', counterId);
-            console.log('Current Status:', currentStatus);
-            console.log('New Status:', newStatus);
+            $(document).on('click', '#addCounter',function (e) {
+                e.preventDefault();
 
-            Swal.fire({
-                title: 'Change Counter Status',
-                text: 'Do you want to change the status of this counter?',
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, update.',
-                cancelButtonText: 'No, cancel!',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "{{ route('admin.updatestatus') }}",
-                        method: 'POST',
-                        data: {
-                            counter_id: counterId,  // Include counter_id
-                            closed: newStatus,      // Send new status
-                            _token: '{{ csrf_token() }}',
-                        },
-                        success: function(response) {
-                            if (response.status === 'success') {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Updated',
-                                    text: response.message,
-                                    confirmButtonText: 'OK'
-                                }).then(function() {
-                                    location.reload();
-                                });
-                            } else {
+                Swal.fire({
+                    title: 'Create Counter',
+                    text: 'Do you want to Create Counter?',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, create.',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: "GET",
+                            url: "{{ route('admin.createcounter') }}",
+                            success: function(response) {
+                                if (response.status == 200) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Created',
+                                        text: response.message,
+                                        confirmButtonText: 'OK'
+                                    }).then(function() {
+                                        table.ajax.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: response.message,
+                                        confirmButtonText: 'OK'
+                                    }).then(function() {
+                                        location.reload();
+                                    });
+                                }
+                            },
+
+                            error: function(xhr, status, error) {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Error',
-                                    text: response.message,
+                                    title: 'Oops...',
+                                    text: 'Something went wrong. Please try again.',
                                     confirmButtonText: 'OK'
-                                }).then(function() {
-                                    location.reload();
                                 });
                             }
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: 'Something went wrong. Please try again.',
-                                confirmButtonText: 'OK'
-                            });
-                        }
-                    });
-                }
+                        });
+                    }
+                });
             });
+
+            $(document).on('click', '#statusButton', function (e) {
+                e.preventDefault();
+                var button = $(this);
+                var counterId = button.data('counter-id');
+                var currentStatus = button.data('closed');  // Get the current status (open/closed)
+
+                // Determine the new status by toggling the current status
+                var newStatus = currentStatus ? 0 : 1;
+
+                console.log('Counter ID:', counterId);
+                console.log('Current Status:', currentStatus);
+                console.log('New Status:', newStatus);
+
+                Swal.fire({
+                    title: 'Change Counter Status',
+                    text: 'Do you want to change the status of this counter?',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, update.',
+                    cancelButtonText: 'No, cancel!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('admin.updatestatus') }}",
+                            method: 'POST',
+                            data: {
+                                counter_id: counterId,  // Include counter_id
+                                closed: newStatus,      // Send new status
+                                _token: '{{ csrf_token() }}',
+                            },
+                            success: function(response) {
+                                if (response.status === 'success') {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Updated',
+                                        text: response.message,
+                                        confirmButtonText: 'OK'
+                                    }).then(function() {
+                                        table.draw();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: response.message,
+                                        confirmButtonText: 'OK'
+                                    }).then(function() {
+                                        location.reload();
+                                    });
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Something went wrong. Please try again.',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
         });
 
     </script>
