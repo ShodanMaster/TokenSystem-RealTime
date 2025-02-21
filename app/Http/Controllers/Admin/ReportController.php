@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Counter;
 use App\Models\CounterToken;
 use App\Models\Token;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
-    public function index(){
+    public function tokenReport(){
         $reports = Token::latest()
             ->get()
             ->groupBy('date') // Group by the date column
@@ -25,10 +27,10 @@ class ReportController extends Controller
             });
             // dd($reports);
 
-        return view('admin.report.index', compact('reports'));
+        return view('admin.report.token.index', compact('reports'));
     }
 
-    public function detailedReport($date){
+    public function detailedTokenReport($date){
         // dd($id);
         try{
 
@@ -40,7 +42,7 @@ class ReportController extends Controller
                         ->get();
             // dd($tokens);
             if ($tokens) {
-                return view('admin.report.detailedreport', compact('tokens', 'date'));
+                return view('admin.report.token.detailedreport', compact('tokens', 'date'));
             } else {
                 return redirect()->back()->with('error', 'Details Not Found');
             }
@@ -48,4 +50,56 @@ class ReportController extends Controller
             return redirect()->back()->with('error', 'Something Went Wrong! '.$e->getMessage());
         }
     }
+
+    public function counterReport(){
+        $counters = Counter::latest()
+        ->get()
+        ->map(function($counter){
+            $tokensCount = $counter->tokens()
+            ->whereDate('tokens.created_at', $counter->created_at->toDateString())
+            ->count();
+
+            return (object)[
+                'name' => $counter->name,
+                'date' => $counter->created_at->toDateString(),
+                'tokens_count' => $tokensCount,
+            ];
+        });
+
+        // dd($counters);
+
+    return view('admin.report.counter.index', compact('counters'));
+    }
+
+    public function detailedCounterReport($counter)
+    {
+        try {
+            $counter = Counter::where('name', $counter)->first();
+
+            if (!$counter) {
+                return redirect()->back()->with('error', 'Counter not found.');
+            }
+
+            // Get all tokens for the counter with their specific creation date
+            $tokensWithDate = DB::table('tokens')
+                ->join('counter_token', 'tokens.id', '=', 'counter_token.token_id')
+                ->where('counter_token.counter_id', $counter->id)
+                ->select('tokens.date', 'tokens.token_number', 'tokens.name','counter_token.counter_id', 'counter_token.token_id')
+                ->orderBy('tokens.date', 'desc')
+                ->orderBy('tokens.token_number', 'desc')
+                ->get();
+
+            if ($tokensWithDate->isNotEmpty()) {
+                return view('admin.report.counter.detailedreport', compact('tokensWithDate', 'counter'));
+            } else {
+                return redirect()->back()->with('error', 'Details Not Found');
+            }
+
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Something Went Wrong! ' . $e->getMessage());
+        }
+    }
+
+
+
 }

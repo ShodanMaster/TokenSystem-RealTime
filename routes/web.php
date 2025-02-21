@@ -36,8 +36,10 @@ Route::middleware('auth:web')->prefix('admin')->name('admin.')->group(function()
     Route::get('create-counter', [CounterController::class, 'createCounter'])->name('createcounter');
     Route::post('update-status', [CounterController::class, 'updateStatus'])->name('updatestatus');
 
-    Route::get('report', [ReportController::class, 'index'])->name('report');
-    Route::get('detailed-report/{date}', [ReportController::class, 'detailedReport'])->name('detailedreport');
+    Route::get('token-report', [ReportController::class, 'tokenReport'])->name('tokenreport');
+    Route::get('detailed-token-report/{date}', [ReportController::class, 'detailedTokenReport'])->name('detailedtokenreport');
+    Route::get('counter-report', [ReportController::class, 'counterReport'])->name('counterreport');
+    Route::get('detailed-counter-report/{counter}', [ReportController::class, 'detailedCounterReport'])->name('detailedcounterreport');
 
     Route::get('logging-out', [LoginController::class, 'loggingOut'])->name('loggingout');
 

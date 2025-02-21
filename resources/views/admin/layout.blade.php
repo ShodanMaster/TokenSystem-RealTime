@@ -23,10 +23,15 @@
                     <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.counter') ? 'active' : '' }} text-white" aria-current="page" href="{{route('admin.counter')}}">Counter</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ Route::is('admin.report') ? 'active' : '' }} text-white" aria-current="page" href="{{route('admin.report')}}">Reports</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          Reports
+                        </a>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="{{route('admin.tokenreport')}}">Token Report</a></li>
+                          <li><a class="dropdown-item" href="{{route('admin.counterreport')}}">Counter Report</a></li>
+                        </ul>
                     </li>
-
                 </ul>
                     <a href="{{route('admin.loggingout')}}"><button class="btn btn-danger" type="button">Logout</button></a>
             </div>

@@ -21,7 +21,7 @@
                     <td>{{$report->date}}</td>
                     <td>
                         <!-- Button link to the detailed report -->
-                        <a href="{{ route('admin.detailedreport', $report->date) }}">
+                        <a href="{{ route('admin.detailedtokenreport', $report->date) }}">
                             <button class="btn btn-info">Detailed</button>
                         </a>
                     </td>
