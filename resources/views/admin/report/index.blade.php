@@ -7,7 +7,6 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Total</th>
-                <th scope="col">Last Went</th>
                 <th scope="col">Token left</th>
                 <th scope="col">Date</th>
                 <th scope="col">Detailed</th>
@@ -15,16 +14,20 @@
         </thead>
         <tbody>
             @forelse ($reports as $report)
-            <tr>
-                <td>{{$loop->iteration}}</td>
-                <td>{{$report->total_token}}</td>
-                <td>{{$report->last_went}}</td>
-                <td>{{$report->token_left}}</td>
-                <td>{{$report->date}}</td>
-                <td><a href="{{route('admin.detailedreport', encrypt($report->id))}}"><button class="btn btn-info">Detailed</button></a></td>
-            </tr>
+                <tr>
+                    <td>{{$loop->iteration}}</td>
+                    <td>{{$report->total}}</td>
+                    <td>{{$report->token_left}}</td>
+                    <td>{{$report->date}}</td>
+                    <td>
+                        <!-- Button link to the detailed report -->
+                        <a href="{{ route('admin.detailedreport', $report->date) }}">
+                            <button class="btn btn-info">Detailed</button>
+                        </a>
+                    </td>
+                </tr>
             @empty
-                <tr><td class="text-center text-muted" colspan="6"></td></tr>
+                <tr><td class="text-center text-muted" colspan="5">No reports available.</td></tr>
             @endforelse
         </tbody>
     </table>

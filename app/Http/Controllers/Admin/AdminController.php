@@ -42,7 +42,7 @@ class AdminController extends Controller
             $totalTokens = Token::whereDate('date', today())->count();
             $tokensLeft = $totalTokens - $trueTokens;
             // dd($tokensLeft);
-            $lastWent = DB::table('counter_token')->where('created_at', today())->latest()->first();
+            $lastWent = DB::table('counter_token')->whereDate('created_at', Carbon::today())->latest()->first();
             // dd($lastWent);
             return response()->json([
                 'status' => 200,

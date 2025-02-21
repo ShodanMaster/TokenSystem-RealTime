@@ -2,49 +2,58 @@
 @section('content')
 <div class="card shadow-lg">
     <div class="card-header bg-info text-white fs-4 text-center">
-        Detailed Report on {{$token->date}}
+        Detailed Report on {{$date}}
     </div>
     <div class="card-body">
         <!-- Token Stats Section -->
         <div class="row mb-4">
-            <div class="col-md-4 mb-3">
+            <div class="col-md-6 mb-3">
                 <div class="card shadow-sm p-3 text-center">
-                    <h5>Total Token</h5>
-                    <p class="fs-3">{{$token->total_token}}</p>
+                    <h5>Total Tokens</h5>
+                    <p class="fs-3">{{ count($tokens) }}</p>
                 </div>
             </div>
-            <div class="col-md-4 mb-3">
-                <div class="card shadow-sm p-3 text-center">
-                    <h5>Last Went</h5>
-                    <p class="fs-3">{{$token->last_went}}</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card shadow-sm p-3 text-center">
-                    <h5>Token Left</h5>
-                    <p class="fs-3">{{$token->token_left}}</p>
+            <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm p-3 text-center">
+                        <h5>Total Tokens</h5>
+                        <p class="fs-3">{{ count($tokens->filter(function($t) { return $t->status === 0; })) }}</p>
+                    </div>
                 </div>
             </div>
         </div>
+
 
         <!-- Counter Token Details Table -->
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover">
                 <thead>
                     <tr class="bg-light">
-                        <th>Counter Name</th>
+                        <th>Name</th>
                         <th>Token Number</th>
+                        <th>Counter</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($counters as $counter)
-                        <tr>
-                            <td>{{$counter->counter->name}}</td>
-                            <td>{{$counter->token_number}}</td>
-                        </tr>
+                    @forelse ($tokens as $token)
+                        @if ($token->counters->isEmpty())
+                            <!-- If the token has no counters -->
+                            <tr>
+                                <td>{{ $token->name }}</td>
+                                <td>{{ $token->token_number }}</td>
+                                <td>No Counter</td> <!-- Display message if no counter -->
+                            </tr>
+                        @else
+                            @foreach ($token->counters as $counter) <!-- Loop through counters if any -->
+                                <tr>
+                                    <td>{{ $token->name }}</td>
+                                    <td>{{ $token->token_number }}</td>
+                                    <td>{{ $counter->name }}</td> <!-- Display counter name -->
+                                </tr>
+                            @endforeach
+                        @endif
                     @empty
                         <tr>
-                            <td colspan="2" class="text-center text-muted">No Data Available</td>
+                            <td colspan="3" class="text-center text-muted">No Data Available</td>
                         </tr>
                     @endforelse
                 </tbody>

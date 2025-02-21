@@ -83,7 +83,7 @@
                 error: function(xhr, status, error) {
                     // Handle error if no tokens are available
                     $('#tokensLeft').text('0');
-                    $(tokenLabel).text("Token #0");
+                    // $(tokenLabel).text("Token #0");
                     var errorResponse = JSON.parse(xhr.responseText);
                     Swal.fire({
                         icon: 'error',

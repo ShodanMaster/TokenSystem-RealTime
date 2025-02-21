@@ -44,6 +44,9 @@
             $(document).on('submit', '#tokenForm', function (e) {
                 e.preventDefault();
 
+                $('.btn-success').prop('disabled', true);
+                $('.btn-success').text('Issuing...');
+
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -72,6 +75,10 @@
                         // Handle errors such as network issues, or invalid response
                         console.error("Error: " + error);
                         alert('An error occurred: ' + error);
+                    },
+                    complete: function() {
+                        $('.btn-success').prop('disabled', false);
+                        $('.btn-success').text('Issue Token');
                     }
                 });
 
