@@ -21,6 +21,7 @@
             <table class="table table-bordered table-striped table-hover" id="tokens-table">
                 <thead>
                     <tr class="bg-light">
+                        <th>#</th>
                         <th>Name</th>
                         <th>Token Number</th>
                     </tr>
