@@ -8,6 +8,8 @@ use App\Models\Token;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CounterController extends Controller
 {
@@ -76,5 +78,24 @@ class CounterController extends Controller
         }
     }
 
+    public function windowLoad(){
+
+        $trueTokens = Token::whereDate('date', today())->where('status', true)->count();
+        $totalTokens = Token::whereDate('date', today())->count();
+        $lastWent = DB::table('counter_token')->whereDate('created_at', Carbon::today())->where('counter_id', Auth::guard('counter')->user()->id)->latest()->first();
+        // dd($lastWent);
+        $tokensLeft = $totalTokens - $trueTokens;
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Tokens Added',
+            'data' => [
+                'total' => $totalTokens ?? 0,
+                'token_number' => $lastWent->last_went ?? 0,
+                'total_left' => $tokensLeft,
+            ]
+        ]);
+
+    }
 
 }

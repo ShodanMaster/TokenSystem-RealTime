@@ -44,6 +44,7 @@ Route::middleware('auth:web')->prefix('admin')->name('admin.')->group(function()
 
 Route::middleware(['auth:counter', 'counterclosed'])->prefix('counter')->name('counter.')->group(function(){
     Route::get('', [CounterCounterController::class, 'index'])->name('index');
+    Route::get('window-load', [CounterCounterController::class, 'windowLoad'])->name('windowload');
 
     Route::get('get-token/{id}', [CounterCounterController::class, 'getToken'])->name('gettoken');
 

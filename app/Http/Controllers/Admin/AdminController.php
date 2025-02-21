@@ -62,6 +62,7 @@ class AdminController extends Controller
     }
 
     public function windowLoad(){
+
         $trueTokens = Token::whereDate('date', today())->where('status', true)->count();
         $totalTokens = Token::whereDate('date', today())->count();
         $lastWent = DB::table('counter_token')->whereDate('created_at', Carbon::today())->latest()->first();
