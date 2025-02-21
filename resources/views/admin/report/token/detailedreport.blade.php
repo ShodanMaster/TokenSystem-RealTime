@@ -25,7 +25,7 @@
 
         <!-- Counter Token Details Table -->
         <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover">
+            {{-- <table class="table table-bordered table-striped table-hover">
                 <thead>
                     <tr class="bg-light">
                         <th>Name</th>
@@ -57,8 +57,41 @@
                         </tr>
                     @endforelse
                 </tbody>
+            </table> --}}
+
+            <table id="tokenReportTable" class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr class="bg-light">
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Token Number</th>
+                        <th>Counter</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- DataTable will populate this dynamically -->
+                </tbody>
             </table>
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+            var date = "{{ $date }}"; // Get the date from the controller
+            $('#tokenReportTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{!! route('admin.getdetailedtokenreport', ['date' => $date]) !!}', // URL for AJAX request
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex' }, // Auto-increment index column
+                    { data: 'name', name: 'name' }, // Display token name
+                    { data: 'token_number', name: 'token_number' }, // Display token number
+                    { data: 'counter', name: 'counter' } // Display counter(s) (No Counter or list of counters)
+                ]
+            });
+        });
+
+    </script>
 @endsection

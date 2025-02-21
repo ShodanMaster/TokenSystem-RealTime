@@ -1,34 +1,51 @@
 @extends('admin.layout')
 @section('content')
-    <h1>Reports</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Total</th>
-                <th scope="col">Token left</th>
-                <th scope="col">Date</th>
-                <th scope="col">Detailed</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($reports as $report)
-                <tr>
-                    <td>{{$loop->iteration}}</td>
-                    <td>{{$report->total}}</td>
-                    <td>{{$report->token_left}}</td>
-                    <td>{{$report->date}}</td>
-                    <td>
-                        <!-- Button link to the detailed report -->
-                        <a href="{{ route('admin.detailedtokenreport', $report->date) }}">
-                            <button class="btn btn-info">Detailed</button>
-                        </a>
-                    </td>
-                </tr>
-            @empty
-                <tr><td class="text-center text-muted" colspan="5">No reports available.</td></tr>
-            @endforelse
-        </tbody>
-    </table>
+    <div class="card shadow-lg">
+        <div class="card-header bg-info text-white fs-4">
+            Token Report
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table" id="tokenReport">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Token left</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Detailed</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+@endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function () {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        var table = $('#tokenReport').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{route('admin.gettokenreport')}}",  // The correct route for your server-side method
+            columns: [
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                { data: 'total', name: 'total' },   // Make sure the server-side response has 'total'
+                { data: 'token_left', name: 'token_left' },  // Same for 'token_left'
+                { data: 'date', name: 'date' },   // 'date' from the response
+                { data: 'action', name: 'action', orderable: false, searchable: false }  // 'action' for the buttons
+            ],
+        });
+    });
+</script>
 @endsection

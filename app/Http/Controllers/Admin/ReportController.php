@@ -10,10 +10,16 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class ReportController extends Controller
 {
     public function tokenReport(){
+                return view('admin.report.token.index');
+    }
+
+    public function getTokenReport(Request $request)
+    {
         $reports = Token::latest()
             ->get()
             ->groupBy('date') // Group by the date column
@@ -21,35 +27,61 @@ class ReportController extends Controller
                 return (object)[
                     'date' => $groupedTokens->first()->date, // Get the date for the group
                     'total' => $groupedTokens->count(), // Total count of tokens for that date
-                    'token_left' => $groupedTokens->where('status', false)->count(), // Count tokens where 'true' is false
+                    'token_left' => $groupedTokens->where('status', false)->count(), // Count tokens where 'status' is false
                     'id' => $groupedTokens->first()->date // Include an ID for detailed report
                 ];
             });
-            // dd($reports);
 
-        return view('admin.report.token.index', compact('reports'));
+        if($request->ajax()){
+            return DataTables::of($reports)
+                ->addIndexColumn()
+                ->addColumn('action', function($report){
+                    return '<a href="' . route('admin.detailedtokenreport', $report->date) . '">
+                                <button class="btn btn-info">Detailed</button>
+                            </a>';
+                })
+                ->make(true);
+        }
     }
 
     public function detailedTokenReport($date){
-        // dd($id);
-        try{
+        $startOfDay = Carbon::parse($date)->startOfDay();
+        $endOfDay = Carbon::parse($date)->endOfDay();
+        $tokens = Token::with('counters')->whereBetween('created_at', [$startOfDay, $endOfDay])
+                    ->latest()
+                    ->get();
+        return view('admin.report.token.detailedreport', compact('tokens', 'date'));
+    }
 
-            $startOfDay = Carbon::parse($date)->startOfDay();
-            $endOfDay = Carbon::parse($date)->endOfDay();
+    public function getDetailedTokenReport(Request $request, $date){
+        $startOfDay = Carbon::parse($date)->startOfDay();
+        $endOfDay = Carbon::parse($date)->endOfDay();
 
-            $tokens = Token::whereBetween('created_at', [$startOfDay, $endOfDay])
-                        ->latest()
-                        ->get();
-            // dd($tokens);
-            if ($tokens) {
-                return view('admin.report.token.detailedreport', compact('tokens', 'date'));
-            } else {
-                return redirect()->back()->with('error', 'Details Not Found');
-            }
-        }catch(Exception $e){
-            return redirect()->back()->with('error', 'Something Went Wrong! '.$e->getMessage());
+        $tokens = Token::with('counters')->whereBetween('created_at', [$startOfDay, $endOfDay])
+                    ->latest()
+                    ->get();
+
+        if ($request->ajax()) {
+            return DataTables::of($tokens)
+                ->addIndexColumn()
+                ->addColumn('name', function($token) {
+                    return $token->name;
+                })
+                ->addColumn('token_number', function($token) {
+                    return $token->token_number;
+                })
+                ->addColumn('counter', function($token) {
+                    if ($token->counters->isEmpty()) {
+                        return 'No Counter'; // No counter assigned
+                    } else {
+                        // If multiple counters, loop through them
+                        return $token->counters->pluck('name')->implode(', '); // Combines the counter names if more than one
+                    }
+                })
+                ->make(true);
         }
     }
+
 
     public function counterReport(){
         $counters = Counter::latest()
