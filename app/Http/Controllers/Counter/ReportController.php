@@ -8,31 +8,40 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Facades\DataTables;
 
 class ReportController extends Controller
 {
     public function index(){
+        return view('counter.report.index');
+    }
+
+    public function getReport(Request $request){
         $reports = Token::whereHas('counters', function ($query) {
-                $query->where('counter_id', Auth::guard('counter')->user()->id);
-            })
-            ->latest()
-            ->get()
-            ->groupBy('date') // Group by the date column
-            ->map(function($groupedTokens) {
-                return (object)[
-                    'date' => $groupedTokens->first()->date, // Get the date for the group
-                    'total' => $groupedTokens->count(), // Total count of tokens for that date
-                    'id' => $groupedTokens->first()->date // Include an ID for detailed report
-                ];
-            });
+            $query->where('counter_id', Auth::guard('counter')->user()->id);
+        })
+        ->latest()
+        ->get()
+        ->groupBy('date') // Group by the date column
+        ->map(function($groupedTokens) {
+            return (object)[
+                'date' => $groupedTokens->first()->date, // Get the date for the group
+                'total' => $groupedTokens->count(), // Total count of tokens for that date
+                'id' => $groupedTokens->first()->date // Include an ID for detailed report
+            ];
+        });
 
-            // dd($reports);
-
-        return view('counter.report.index', compact('reports'));
+        if ($request->ajax()) {
+            return DataTables::of($reports)
+                ->addIndexColumn()
+                ->addColumn('action', function ($report) {
+                    return '<a href="' . route('counter.detailedreport', $report->date) . '" class="btn btn-info">Detailed</a>';
+                })
+                ->make(true);
+        }
     }
 
     public function detailedReport($date){
-        // dd($id);
         try{
 
             $startOfDay = Carbon::parse($date)->startOfDay();
@@ -51,6 +60,29 @@ class ReportController extends Controller
             }
         }catch(Exception $e){
             return redirect()->back()->with('error', 'Something Went Wrong! '.$e->getMessage());
+        }
+    }
+
+    public function getDetailedReport(Request $request, $date){
+        $startOfDay = Carbon::parse($date)->startOfDay();
+        $endOfDay = Carbon::parse($date)->endOfDay();
+
+        $tokens = Token::whereHas('counters', function ($query) {
+            $query->where('counter_id', Auth::guard('counter')->user()->id);
+        })->whereBetween('created_at', [$startOfDay, $endOfDay])
+                    ->latest()
+                    ->get();
+
+        if ($request->ajax()) {
+            return DataTables::of($tokens)
+                ->addIndexColumn()
+                ->addColumn('name', function ($token) {
+                    return $token->name;
+                })
+                ->addColumn('token_number', function ($token) {
+                    return $token->token_number;
+                })
+                ->make(true);
         }
     }
 }

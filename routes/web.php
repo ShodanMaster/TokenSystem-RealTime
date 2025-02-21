@@ -57,7 +57,9 @@ Route::middleware(['auth:counter', 'counterclosed'])->prefix('counter')->name('c
     Route::get('get-token/{id}', [CounterCounterController::class, 'getToken'])->name('gettoken');
 
     Route::get('report', [CounterReportController::class, 'index'])->name('report');
+    Route::get('get-report', [CounterReportController::class, 'getReport'])->name('getreport');
     Route::get('detailed-report/{date}', [CounterReportController::class, 'detailedReport'])->name('detailedreport');
+    Route::get('get-detailed-report/{date}', [CounterReportController::class, 'getDetailedReport'])->name('getdetailedreport');
 
     Route::get('logging-out', [LoginController::class, 'loggingOut'])->name('loggingout');
 });
