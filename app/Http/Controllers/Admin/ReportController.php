@@ -14,12 +14,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ReportController extends Controller
 {
+
     public function tokenReport(){
                 return view('admin.report.token.index');
     }
 
-    public function getTokenReport(Request $request)
-    {
+    public function getTokenReport(Request $request){
+
         $reports = Token::latest()
             ->get()
             ->groupBy('date') // Group by the date column
@@ -84,27 +85,49 @@ class ReportController extends Controller
 
 
     public function counterReport(){
-        $counters = Counter::latest()
-        ->get()
-        ->map(function($counter){
-            $tokensCount = $counter->tokens()
-            ->whereDate('tokens.created_at', $counter->created_at->toDateString())
-            ->count();
-
-            return (object)[
-                'name' => $counter->name,
-                'date' => $counter->created_at->toDateString(),
-                'tokens_count' => $tokensCount,
-            ];
-        });
-
-        // dd($counters);
-
-    return view('admin.report.counter.index', compact('counters'));
+        return view('admin.report.counter.index');
     }
 
-    public function detailedCounterReport($counter)
-    {
+    public function getCounterReport(Request $request){
+
+        $counters = Counter::latest()
+            ->get()
+            ->map(function($counter){
+                $tokensCount = $counter->tokens()
+                    ->whereDate('tokens.created_at', $counter->created_at->toDateString())
+                    ->count();
+
+                return (object)[
+                    'name' => $counter->name,
+                    'date' => $counter->created_at->toDateString(),
+                    'tokens_count' => $tokensCount,
+                ];
+            });
+
+        if($request->ajax()){
+            return DataTables::of($counters)
+                ->addIndexColumn() // Add index for auto-incremented row number
+                ->addColumn('name', function($counter) {
+                    return $counter->name; // Display the counter's name
+                })
+                ->addColumn('date', function($counter) {
+                    return $counter->date; // Display the counter's created date
+                })
+                ->addColumn('tokens_count', function($counter) {
+                    return $counter->tokens_count; // Display the token count for the counter
+                })
+                ->addColumn('action', function($counter) {
+                    // Create the 'Detailed' button with link to the detailed report
+                    return '<a href="' . route('admin.detailedcounterreport', $counter->name) . '"><button class="btn btn-info">Detailed</button></a>';
+                })
+                ->rawColumns(['action']) // Ensure the button is rendered as HTML
+                ->make(true); // Return DataTable response
+        }
+    }
+
+
+    public function detailedCounterReport($counter){
+
         try {
             $counter = Counter::where('name', $counter)->first();
 
@@ -129,6 +152,36 @@ class ReportController extends Controller
 
         } catch (Exception $e) {
             return redirect()->back()->with('error', 'Something Went Wrong! ' . $e->getMessage());
+        }
+    }
+
+    public function getDetailedCounterReport(Request $request, $counter){
+        $counter = Counter::where('name', $counter)->first();
+
+        $tokensWithDate = DB::table('tokens')
+                ->join('counter_token', 'tokens.id', '=', 'counter_token.token_id')
+                ->where('counter_token.counter_id', $counter->id)
+                ->select('tokens.date', 'tokens.token_number', 'tokens.name','counter_token.counter_id', 'counter_token.token_id')
+                ->orderBy('tokens.date', 'desc')
+                ->orderBy('tokens.token_number', 'desc')
+                ->get();
+
+        if($request->ajax()){
+            return DataTables::of($tokensWithDate)
+                ->addIndexColumn() // Add index column for auto-incrementing row number
+                ->addColumn('date', function($token) {
+                    return $token->date; // Display the token date
+                })
+                ->addColumn('token_number', function($token) {
+                    return $token->token_number; // Display the token number
+                })
+                ->addColumn('name', function($token) {
+                    return $token->name; // Display the token name
+                })
+                ->addColumn('counter', function($token) use ($counter) {
+                    return $counter->name; // Display the counter's name
+                })
+                ->make(true); // Return DataTable response
         }
     }
 

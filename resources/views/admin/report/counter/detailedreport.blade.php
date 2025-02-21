@@ -6,7 +6,7 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover">
+            <table class="table table-bordered table-striped table-hover" id="counterReportTable">
                 <thead>
                     <tr class="bg-light">
                         <th>Name</th>
@@ -15,20 +15,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($tokensWithDate as $token)
-                        <tr>
-                            <td>{{ $token->name }}</td>
-                            <td>{{ $token->token_number }}</td>
-                            <td>{{ \Carbon\Carbon::parse($token->date)->format('d-m-Y') }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="text-center text-muted">No Data Available</td>
-                        </tr>
-                    @endforelse
+                    <!-- Data will be filled by DataTable via Ajax -->
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+        $('#counterReportTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '{{ route("admin.getdetailedcounterreport", $counter->name) }}', // Ensure this route matches the route in your web.php
+            columns: [
+                { data: 'name', name: 'name' },
+                { data: 'token_number', name: 'token_number' },
+                { data: 'date', name: 'date' },
+            ],
+            order: [[2, 'desc'], [1, 'desc']], // Orders by date and token_number
+        });
+    });
+    </script>
 @endsection

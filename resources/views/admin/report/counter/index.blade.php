@@ -1,34 +1,55 @@
 @extends('admin.layout')
 @section('content')
-    <h1>Counters</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">name</th>
-                <th scope="col">tokens</th>
-                <th scope="col">Date</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($counters as $counter)
-                <tr>
-                    <td>{{$loop->iteration}}</td>
-                    <td>{{$counter->name}}</td>
-                    <td>{{$counter->tokens_count}}</td>
-                    <td>{{$counter->date}}</td>
-                    <td>
-                        <!-- Button link to the detailed counter -->
-                        <a href="{{route('admin.detailedcounterreport', $counter->name)}}">
-                            <button class="btn btn-info">Detailed</button>
-                        </a>
-                    </td>
-                </tr>
-            @empty
-                <tr><td class="text-center text-muted" colspan="5">No counters available.</td></tr>
-            @endforelse
-        </tbody>
-    </table>
+    <div class="card shadow-lg">
+        <div class="card-header bg-info text-white fs-4">
+            Counter Report
+        </div>
+        <div class="card-body">
+            <table class="table" id="counterReportTable">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Tokens</th>
+                        <th scope="col">Date</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- This tbody will be populated by DataTables -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+@endsection
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#counterReportTable').DataTable({
+                processing: true,  // Show loading indicator
+                serverSide: true,  // Enable server-side processing
+                ajax: '{!! route('admin.getcounterreport') !!}', // The AJAX URL to fetch data
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex' }, // Auto-incrementing index column
+                    { data: 'name', name: 'name' },               // Counter name
+                    { data: 'tokens_count', name: 'tokens_count' }, // Token count
+                    { data: 'date', name: 'date' },              // Date
+                    {
+                        data: null,
+                        render: function(data, type, row) {
+                            // Render button with link to detailed report
+                            return `<a href="{{ route('admin.detailedcounterreport', '') }}/${row.name}">
+                                        <button class="btn btn-info">Detailed</button>
+                                    </a>`;
+                        },
+                        searchable: false,
+                        orderable: false
+                    }  // Action button
+                ]
+            });
+        });
+
+    </script>
 @endsection

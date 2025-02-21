@@ -9,38 +9,6 @@
         </button>
     </div>
     <div class="card-body">
-        {{-- <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Counter</th>
-                    <th scope="col">Open/Close</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($counters as $counter)
-                    <tr>
-                        <td>{{$loop->iteration}}</td>
-                        <td>{{$counter->name}}</td>
-                        <td>
-                            <span class="btn btn-sm {{$counter->closed ? 'btn-danger' : 'btn-success'}} rounded"
-                                  id="statusButton"
-                                  data-closed="{{ $counter->closed }}"
-                                  data-counter-id="{{ encrypt($counter->id) }}">  <!-- Store counter ID here -->
-                                @if ($counter->closed)
-                                    CLOSED
-                                @else
-                                    OPEN
-                                @endif
-                            </span>
-                        </td>
-                    </tr>
-                @empty
-                    <tr><td class="text-center text-muted" colspan="3">No Counters</td></tr>
-                @endforelse
-            </tbody>
-        </table> --}}
-
         <table class="table table-striped" id="counterTable">
             <thead>
                 <tr>
