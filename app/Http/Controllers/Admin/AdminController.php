@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\Admin\AdminEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Token;
 use Carbon\Carbon;
@@ -16,42 +17,38 @@ class AdminController extends Controller
     }
 
     public function addToken(Request $request){
-        // dd($request->all());
+
         $request->validate([
-            'name' => 'required|string'
+            'name' => 'required|string',
         ]);
-        try{
+
+        try {
             $lastToken = Token::whereDate('date', today())->latest()->first();
             $trueTokens = Token::whereDate('date', today())->where('status', true)->count();
-            // dd($pendingTokens);
             $totalTokens = Token::whereDate('date', today())->count();
-            // dd('trueTokens: '. $trueTokens, 'totalTokens: '.$totalTokens);
-            // dd($tokensLeft);
-            if (!$lastToken) {
-                $tokenNumber = 0;
-            } else {
-                $tokenNumber = $lastToken->token_number;
-            }
+
+            $tokenNumber = $lastToken ? $lastToken->token_number + 1 : 1;
 
             $token = Token::create([
                 'name' => $request->name,
-                'token_number' => $tokenNumber + 1
+                'token_number' => $tokenNumber,
+                'date' => today(),
             ]);
-
 
             $totalTokens = Token::whereDate('date', today())->count();
             $tokensLeft = $totalTokens - $trueTokens;
-            // dd($tokensLeft);
-            $lastWent = DB::table('counter_token')->whereDate('created_at', Carbon::today())->latest()->first();
-            // dd($lastWent);
+            $lastWent = DB::table('counter_token')->whereDate('created_at', today())->latest()->value('last_went') ?? 0;
+
+            event(new AdminEvent($totalTokens, $tokensLeft));
+
             return response()->json([
                 'status' => 200,
-                'message' => 'Tokens Added',
+                'message' => 'Token Added',
                 'data' => [
-                    'total' => $totalTokens ?? 0,
-                    'token_number' => $lastWent->last_went ?? 0,
+                    'total' => $totalTokens,
+                    'token_number' => $lastWent,
                     'total_left' => $tokensLeft,
-                ]
+                ],
             ]);
         } catch (Exception $e) {
             return response()->json([

@@ -29,9 +29,19 @@
 
 @endsection
 @section('scripts')
+
     <script>
 
         $(document).ready(function () {
+
+
+            setTimeout(() => {
+                window.Echo.channel('counterget').listen('.get', (e)=>{
+                    // console.log(e);
+                    $('#lastWent').text(e.lastWent);
+                    $('#tokenLeft').text(e.tokensLeft);
+                })
+            }, 200);
 
             $.ajax({
                 type: "GET",

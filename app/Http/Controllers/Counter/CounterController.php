@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Counter;
 
+use App\Events\Counter\CounterGet;
 use App\Http\Controllers\Controller;
 use App\Models\Counter;
 use App\Models\Token;
@@ -60,6 +61,7 @@ class CounterController extends Controller
             // dd('TokensLeft'.$totalTokens - $trueTokens);
             $tokenLeft = $totalTokens - $trueTokens;
 
+            event(new CounterGet($tokenLeft, $pivot->pivot->last_went));
             // dd($pivot->pivot);
             return response()->json([
                 'status' => 200,

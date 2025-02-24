@@ -31,11 +31,26 @@
 
         $(document).ready(function () {
 
+            setTimeout(() => {
+                window.Echo.channel('adminevent').listen('.issued', (e)=>{
+                    // console.log(e);
+                    $('#totalTokenIssued').text(e.totalTokens);
+                    $('#tokensLeft').text(e.tokensLeft);
+                })
+            }, 200);
+
+            setTimeout(() => {
+                window.Echo.channel('counterget').listen('.get', (e)=>{
+                    // console.log(e);
+                    $('#tokensLeft').text(e.tokensLeft);
+                })
+            }, 200);
+
             $.ajax({
                     type: "GET",
                     url: "{{route('counter.windowload')}}",
                     success: function (response) {
-                        console.log(response);
+                        // console.log(response);
 
                         // updateTokenDisplay(response.data.total, response.data.token_number, response.data.total_left);
                         $('#totalTokenIssued').text(response.data.total);
@@ -54,7 +69,7 @@
                     type: "GET",
                     url: "{{route('counter.gettoken', ':id')}}".replace(':id', counterId),  // Replace counter ID dynamically in URL
                     success: function (response) {
-                        console.log(response);
+                        // console.log(response);
 
                         if (response.status === 200) {
                             // Update the HTML elements with the new token data

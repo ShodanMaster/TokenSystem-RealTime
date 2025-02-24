@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{asset('sweetalert/sweetalert2.min.css')}}">
     <link rel="stylesheet" href="{{asset('datatable/dataTables.dataTables.min.css')}}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    @vite('resources/js/app.js')
 
 </head>
 <body>
