@@ -1,5 +1,8 @@
 @extends('counter.layout')
 @section('content')
+<div class="d-flex justify-content-end mb-2">
+    <a href="{{route('counter.getdetailedreportexcel',  $date)}}"><button class="btn btn-success">Excel</button></a>
+</div>
 <div class="card shadow-lg">
     <div class="card-header bg-info text-white fs-4 text-center">
         Detailed Report on {{$date}}

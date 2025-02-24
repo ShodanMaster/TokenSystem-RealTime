@@ -11,10 +11,15 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 class DetailedTokenReport implements FromArray, WithHeadings, WithCustomStartCell
 {
     protected $date;
+    protected $totalTokens;
 
     public function __construct($date)
     {
         $this->date = $date;
+        $this->totalTokens = Token::whereBetween('created_at', [
+            Carbon::parse($date)->startOfDay(),
+            Carbon::parse($date)->endOfDay()
+        ])->count();
     }
 
     public function array(): array
@@ -42,7 +47,7 @@ class DetailedTokenReport implements FromArray, WithHeadings, WithCustomStartCel
     public function headings(): array
     {
         return [
-            ["Detailed Report for Counter: " . $this->date],
+            ["Detailed Report for Tokens: " . $this->date . " | Total Tokens: " . $this->totalTokens],
             ["Date", "Token Number", "Name", "Counter"],
         ];
     }

@@ -94,7 +94,7 @@ class ReportController extends Controller
 
     public function detailedTokenReportExcel($date)
     {
-        return Excel::download(new DetailedTokenReport($date), 'detailed_token_report.xlsx');
+        return Excel::download(new DetailedTokenReport($date), $date.'_token_report.xlsx');
     }
 
     public function counterReport(){
@@ -145,7 +145,12 @@ class ReportController extends Controller
     public function detailedCounterReport($counter){
 
         $counter = Counter::where('name', $counter)->first();
-        return view('admin.report.counter.detailedreport', compact('counter'));
+
+        $tokenCount =  DB::table('counter_token')
+            ->where('counter_id', $counter->id)
+            ->count();
+
+        return view('admin.report.counter.detailedreport', compact('counter', 'tokenCount'));
 
     }
 

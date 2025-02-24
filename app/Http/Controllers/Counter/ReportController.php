@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Counter;
 
+use App\Exports\Counter\CounterReport;
+use App\Exports\Counter\DetailedReport;
 use App\Http\Controllers\Controller;
 use App\Models\Token;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class ReportController extends Controller
@@ -39,6 +42,10 @@ class ReportController extends Controller
                 })
                 ->make(true);
         }
+    }
+
+    public function getReportExcel(){
+        return Excel::download(new CounterReport, Auth::guard('counter')->user()->name.'_report.xlsx');
     }
 
     public function detailedReport($date){
@@ -84,5 +91,10 @@ class ReportController extends Controller
                 })
                 ->make(true);
         }
+    }
+
+    public function getDetailedReportExcel($date){
+
+        return Excel::download(new DetailedReport($date ), Auth::guard('counter')->user()->name.'_'.$date.'_detailed_report.xlsx');
     }
 }

@@ -2,8 +2,10 @@
 @section('content')
 
     <div class="card shadow-lg">
-        <div class="card-header bg-info text-white fs-4">
+        <div class="card-header bg-info text-white fs-4 d-flex justify-content-between">
             Reports
+
+            <a href="{{route('counter.getreportexcel')}}"><button class="btn btn-success">Excel</button></a>
         </div>
         <div class="card-body">
             <table class="table" id="reportsTable">

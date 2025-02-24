@@ -9,6 +9,12 @@
         Detailed Report for Counter: {{$counter->name}}
     </div>
     <div class="card-body">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm p-3 text-center">
+                <h5>Total Tokens</h5>
+                <p class="fs-3">{{ $tokenCount }}</p>
+            </div>
+        </div>
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover" id="counterReportTable">
                 <thead>

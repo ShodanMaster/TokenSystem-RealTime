@@ -62,8 +62,10 @@ Route::middleware(['auth:counter', 'counterclosed'])->prefix('counter')->name('c
 
     Route::get('report', [CounterReportController::class, 'index'])->name('report');
     Route::get('get-report', [CounterReportController::class, 'getReport'])->name('getreport');
+    Route::get('get-report-excel', [CounterReportController::class, 'getReportExcel'])->name('getreportexcel');
     Route::get('detailed-report/{date}', [CounterReportController::class, 'detailedReport'])->name('detailedreport');
     Route::get('get-detailed-report/{date}', [CounterReportController::class, 'getDetailedReport'])->name('getdetailedreport');
+    Route::get('get-detailed-report-excel/{date}', [CounterReportController::class, 'getDetailedReportExcel'])->name('getdetailedreportexcel');
 
     Route::get('logging-out', [LoginController::class, 'loggingOut'])->name('loggingout');
 });
