@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exports;
+namespace App\Exports\Admin\Counter;
 
 use App\Models\Counter;
 use Maatwebsite\Excel\Concerns\FromCollection;

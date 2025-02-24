@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\CounterReport;
-use App\Exports\DetailedCounterReport;
+use App\Exports\Admin\Counter\CounterReport;
+use App\Exports\Admin\Counter\DetailedCounterReport;
+use App\Exports\Admin\Token\DetailedTokenReport;
+use App\Exports\Admin\Token\TokenReport;
 use App\Http\Controllers\Controller;
 use App\Models\Counter;
 use App\Models\Token;
@@ -47,6 +49,10 @@ class ReportController extends Controller
         }
     }
 
+    public function tokenReportExcel(){
+        return Excel::download(new TokenReport, 'token_report.xlsx');
+    }
+
     public function detailedTokenReport($date){
         $startOfDay = Carbon::parse($date)->startOfDay();
         $endOfDay = Carbon::parse($date)->endOfDay();
@@ -85,6 +91,11 @@ class ReportController extends Controller
         }
     }
 
+
+    public function detailedTokenReportExcel($date)
+    {
+        return Excel::download(new DetailedTokenReport($date), 'detailed_token_report.xlsx');
+    }
 
     public function counterReport(){
         return view('admin.report.counter.index');
