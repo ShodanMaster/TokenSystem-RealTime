@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\CounterReport;
+use App\Exports\DetailedCounterReport;
 use App\Http\Controllers\Controller;
 use App\Models\Counter;
-use App\Models\CounterToken;
 use App\Models\Token;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class ReportController extends Controller
 {
 
     public function tokenReport(){
-                return view('admin.report.token.index');
+        return view('admin.report.token.index');
     }
 
     public function getTokenReport(Request $request){
@@ -125,34 +127,15 @@ class ReportController extends Controller
         }
     }
 
+    public function counterReportExcel(){
+        return Excel::download(new CounterReport, 'counter_report.xlsx');
+    }
 
     public function detailedCounterReport($counter){
 
-        try {
-            $counter = Counter::where('name', $counter)->first();
+        $counter = Counter::where('name', $counter)->first();
+        return view('admin.report.counter.detailedreport', compact('counter'));
 
-            if (!$counter) {
-                return redirect()->back()->with('error', 'Counter not found.');
-            }
-
-            // Get all tokens for the counter with their specific creation date
-            $tokensWithDate = DB::table('tokens')
-                ->join('counter_token', 'tokens.id', '=', 'counter_token.token_id')
-                ->where('counter_token.counter_id', $counter->id)
-                ->select('tokens.date', 'tokens.token_number', 'tokens.name','counter_token.counter_id', 'counter_token.token_id')
-                ->orderBy('tokens.date', 'desc')
-                ->orderBy('tokens.token_number', 'desc')
-                ->get();
-
-            if ($tokensWithDate->isNotEmpty()) {
-                return view('admin.report.counter.detailedreport', compact('tokensWithDate', 'counter'));
-            } else {
-                return redirect()->back()->with('error', 'Details Not Found');
-            }
-
-        } catch (Exception $e) {
-            return redirect()->back()->with('error', 'Something Went Wrong! ' . $e->getMessage());
-        }
     }
 
     public function getDetailedCounterReport(Request $request, $counter){
@@ -185,6 +168,7 @@ class ReportController extends Controller
         }
     }
 
-
-
+    public function detailedCounterReportExcel($counterName){
+        return Excel::download(new DetailedCounterReport($counterName), $counterName.'_report.xlsx');
+    }
 }

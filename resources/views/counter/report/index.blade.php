@@ -1,6 +1,6 @@
 @extends('counter.layout')
 @section('content')
-    <h1>Reports</h1>
+
     <div class="card shadow-lg">
         <div class="card-header bg-info text-white fs-4">
             Reports

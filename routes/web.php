@@ -43,7 +43,9 @@ Route::middleware('auth:web')->prefix('admin')->name('admin.')->group(function()
     Route::get('get-detailed-token-report/{date}', [ReportController::class, 'getDetailedTokenReport'])->name('getdetailedtokenreport');
     Route::get('counter-report', [ReportController::class, 'counterReport'])->name('counterreport');
     Route::get('get-counter-report', [ReportController::class, 'getCounterReport'])->name('getcounterreport');
+    Route::get('/export-counter-report', [ReportController::class, 'counterReportExcel'])->name('exportcounterreport');
     Route::get('detailed-counter-report/{counter}', [ReportController::class, 'detailedCounterReport'])->name('detailedcounterreport');
+    Route::get('/export-detailed-counter/{counter}', [ReportController::class, 'detailedCounterReportExcel'])->name('exportdetailedcounter');
     Route::get('get-detailed-counter-report/{counter}', [ReportController::class, 'getDetailedCounterReport'])->name('getdetailedcounterreport');
 
     Route::get('logging-out', [LoginController::class, 'loggingOut'])->name('loggingout');

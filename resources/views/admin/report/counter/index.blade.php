@@ -2,8 +2,10 @@
 @section('content')
 
     <div class="card shadow-lg">
-        <div class="card-header bg-info text-white fs-4">
+        <div class="card-header bg-info text-white fs-4 d-flex justify-content-between">
             Counter Report
+
+            <a href="{{route('admin.exportcounterreport')}}"><button class="btn btn-success">Excel</button></a>
         </div>
         <div class="card-body">
             <table class="table" id="counterReportTable">
