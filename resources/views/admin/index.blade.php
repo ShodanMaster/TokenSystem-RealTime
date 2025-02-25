@@ -1,108 +1,51 @@
 @extends('admin.layout')
+
 @section('content')
-    <h1>Admin Dashboard</h1>
 
-    <div class="row">
-        <div class="col-md-6 ">
-            <h1>Total Issued Tokens: <span id="totalTokens">0</span></h1>
-        </div>
-        <div class="col-md-6 ">
-            <h3>Last Went: <span id="lastWent">0</span></h3>
-            <h3>Token Left: <span id="tokenLeft">0</span></h3>
-        </div>
-    </div>
-    <div class="card shadow-lg mb-4">
-        <div class="card-header bg-success text-white text-center fs-4">
-            Add Token
-        </div>
-        <div class="card-body">
-            <form action="" id="tokenForm">
-                <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" name="name" placeholder="Enter Name" required>
-                </div>
-                <div class="d-flex justify-content-end mt-3">
-                    <button type="submit" class="btn btn-success btn-lg">Issue Token</button>
-                </div>
-            </form>
+<h1 class="text-center my-4">Admin Dashboard</h1>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card text-dark bg-danger h-100">
+            <div class="card-body d-flex flex-column text-center">
+                <h5 class="card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-graph-up me-2" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M0 0h1v15h15v1H0V0zm4 11.293 3-3 2 2 4-4 1.5 1.5-5.5 5.5-2-2-3 3V11.293z"/>
+                    </svg>
+                    Average Tokens per Day
+                </h5>
+                <h2 class="fw-bold display-6">{{ $tokenAverage }}</h2>
+            </div>
         </div>
     </div>
 
-@endsection
-@section('scripts')
+    <div class="col-md-4">
+        <div class="card text-dark bg-warning h-100">
+            <div class="card-body d-flex flex-column text-center">
+                <h5 class="card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-award me-2" viewBox="0 0 16 16">
+                        <path d="M9.669.864 8 0 6.331.864 5.13.308A2 2 0 0 0 2.905 2.68l.338 1.574A2.99 2.99 0 0 0 2 7a3 3 0 0 0 6 0 2.99 2.99 0 0 0-.243-1.255l.338-1.574a2 2 0 0 0-2.225-2.372l-1.202.556L4.194.864zM8 1.5c.314 0 .63.045.937.133l-.339 1.575a2.99 2.99 0 0 0-1.196 0l-.339-1.575A3.003 3.003 0 0 1 8 1.5zM6 8a2 2 0 1 1 4 0A2 2 0 0 1 6 8z"/>
+                    </svg>
+                    Most Visited Counter
+                </h5>
+                <h2 class="fw-bold display-6 text-truncate" style="max-width: 100%;">{{ $mostVisitedCounter ?? 'No Data' }}</h2>
+            </div>
+        </div>
+    </div>
 
-    <script>
+    <div class="col-md-4">
+        <div class="card text-dark bg-success h-100">
+            <div class="card-body d-flex flex-column text-center">
+                <h5 class="card-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-ticket me-2" viewBox="0 0 16 16">
+                        <path d="M0 4.5A1.5 1.5 0 0 1 1.5 3h13A1.5 1.5 0 0 1 16 4.5V6a2 2 0 1 0 0 4v1.5A1.5 1.5 0 0 1 14.5 13h-13A1.5 1.5 0 0 1 0 11.5V10a2 2 0 1 0 0-4V4.5zM1 10.93V11.5a.5.5 0 0 0 .5.5H4v-8H1.5a.5.5 0 0 0-.5.5v.57a3 3 0 0 1 0 5.86zM6 12h4V4H6v8zm5-8v8h2.5a.5.5 0 0 0 .5-.5v-.57a3 3 0 0 1 0-5.86V4.5a.5.5 0 0 0-.5-.5H11z"/>
+                    </svg>
+                    Total Tokens Today
+                </h5>
+                <h2 class="fw-bold display-6">{{ $totalTokens ?? 'No Data' }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
 
-        $(document).ready(function () {
-
-
-            setTimeout(() => {
-                window.Echo.channel('counterget').listen('.get', (e)=>{
-                    // console.log(e);
-                    $('#lastWent').text(e.lastWent);
-                    $('#tokenLeft').text(e.tokensLeft);
-                })
-            }, 200);
-
-            $.ajax({
-                type: "GET",
-                url: "{{route('admin.windowload')}}",
-                success: function (response) {
-                    updateTokenDisplay(response.data.total, response.data.token_number, response.data.total_left);
-                }
-            });
-
-            $(document).on('submit', '#tokenForm', function (e) {
-                e.preventDefault();
-
-                $('.btn-success').prop('disabled', true);
-                $('.btn-success').text('Issuing...');
-
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-
-                var formData = new FormData(this);
-
-                $.ajax({
-                    type: "POST",
-                    url: "{{route('admin.addtoken')}}",
-                    data: formData,
-                    dataType: "json",
-                    contentType: false,
-                    processData: false,
-                    success: function (response) {
-                        // console.log(response);
-
-                        if (response.status === 200) {
-                            $('#tokenForm')[0].reset();
-                            // Update UI with the total tokens and token left
-                            updateTokenDisplay(response.data.total, response.data.token_number, response.data.total_left);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle errors such as network issues, or invalid response
-                        console.error("Error: " + error);
-                        alert('An error occurred: ' + error);
-                    },
-                    complete: function() {
-                        $('.btn-success').prop('disabled', false);
-                        $('.btn-success').text('Issue Token');
-                    }
-                });
-
-            });
-
-            function updateTokenDisplay(total, token_number, token_left) {
-
-                $('#totalTokens').text(total);
-                $('#lastWent').text(token_number);
-                $('#tokenLeft').text(token_left);
-
-            }
-
-        });
-
-    </script>
 @endsection

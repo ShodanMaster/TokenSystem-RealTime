@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{asset('bootstrap/bootstrap.min.css')}}">
     <link rel="stylesheet" href="{{asset('sweetalert/sweetalert2.min.css')}}">
     <link rel="stylesheet" href="{{asset('datatable/dataTables.dataTables.min.css')}}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     @vite('resources/js/app.js')
 
 </head>
@@ -22,6 +22,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {{ Route::is('admin.issue') ? 'active' : '' }} text-white" aria-current="page" href="{{route('admin.issue')}}">Issue</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link {{ Route::is('admin.counter') ? 'active' : '' }} text-white" aria-current="page" href="{{route('admin.counter')}}">Counter</a>
                     </li>

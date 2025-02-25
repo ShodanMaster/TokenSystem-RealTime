@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Counter;
 
 use App\Events\Counter\CounterGet;
+use App\Events\Counter\TokenReceived;
 use App\Http\Controllers\Controller;
 use App\Models\Counter;
 use App\Models\Token;
@@ -61,7 +62,22 @@ class CounterController extends Controller
             // dd('TokensLeft'.$totalTokens - $trueTokens);
             $tokenLeft = $totalTokens - $trueTokens;
 
+            $lastFiveTokens = DB::table('counter_token')
+                ->whereDate('created_at', today())
+                ->latest()
+                ->limit(5)
+                ->get();
+
+            $lastFiveData = $lastFiveTokens->map(function ($token) {
+                return [
+                    'token_number' => $token->last_went ?? 0,
+                    'counter' => Counter::whereId($token->counter_id)->value('name') ?? 'No Counter',
+                    'name' => Token::whereId($token->token_id)->value('name') ?? 'No Name',
+                ];
+            });
+
             event(new CounterGet($tokenLeft, $pivot->pivot->last_went));
+            event(new TokenReceived($lastFiveData));
             // dd($pivot->pivot);
             return response()->json([
                 'status' => 200,
