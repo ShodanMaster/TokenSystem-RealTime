@@ -4,6 +4,7 @@ namespace App\Events\Counter;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -20,19 +21,22 @@ class TokenReceived implements ShouldBroadcast
         $this->lastFiveData = $lastFiveData;
     }
 
-    // Broadcast on a private channel only for admin
+    // Broadcast to both admin and index page
     public function broadcastOn()
     {
-        return new PrivateChannel('admin.notifications');
+        return [
+            new PrivateChannel('admin.notifications'), // Admin-specific
+            new Channel('index.notifications'), // Public for index page
+        ];
     }
 
-    // Give a custom event name
+    // Custom event name
     public function broadcastAs()
     {
         return 'token.received';
     }
 
-    // Structure the data being broadcasted
+    // Structure the data
     public function broadcastWith()
     {
         return [

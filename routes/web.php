@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Counter\CounterController as CounterCounterController;
 use App\Http\Controllers\Counter\ReportController as CounterReportController;
+use App\Http\Controllers\IndexController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,10 +20,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
+Route::get('/',[IndexController::class, 'index']);
+Route::get('window-load', [IndexController::class, 'windowLoad'])->name('windowload');
 Route::get('login',[LoginController::class, 'index'])->name('login');
 Route::post('logging-in', [LoginController::class, 'loggingIn'])->name('loggingin');
 
