@@ -8,7 +8,6 @@
         Detailed Report on {{$date}}
     </div>
     <div class="card-body">
-        <!-- Token Stats Section -->
 
         <div class="mb-3">
             <div class="card shadow-sm p-3 text-center">
@@ -17,9 +16,6 @@
             </div>
         </div>
 
-
-
-        <!-- Counter Token Details Table -->
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover" id="tokens-table">
                 <thead>
@@ -30,7 +26,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- Initially, data will be empty, it will be loaded by DataTables --}}
                 </tbody>
             </table>
         </div>
@@ -43,7 +38,7 @@
             $('#tokens-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route("counter.getdetailedreport", $date) }}', // AJAX route to fetch data
+                ajax: '{{ route("counter.getdetailedreport", $date) }}',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex' },
                     { data: 'name', name: 'name' },

@@ -31,7 +31,8 @@ class AdminController extends Controller
     }
 
     public function issue(){
-        return view('admin.issue');
+        $date = Carbon::today()->format('F j, Y');
+        return view('admin.issue', compact('date'));
     }
 
     public function addToken(Request $request){

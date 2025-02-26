@@ -54,8 +54,6 @@
 <script>
     $(document).ready(function () {
 
-
-        // Toggle password visibility for login form
         $('#show-password').change(function() {
             var passwordField = $('#password');
             if ($(this).prop('checked')) {

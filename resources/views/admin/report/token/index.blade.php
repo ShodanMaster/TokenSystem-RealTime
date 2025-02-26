@@ -39,13 +39,13 @@
         var table = $('#tokenReport').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{route('admin.gettokenreport')}}",  // The correct route for your server-side method
+            ajax: "{{route('admin.gettokenreport')}}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                { data: 'total', name: 'total' },   // Make sure the server-side response has 'total'
-                { data: 'token_left', name: 'token_left' },  // Same for 'token_left'
-                { data: 'date', name: 'date' },   // 'date' from the response
-                { data: 'action', name: 'action', orderable: false, searchable: false }  // 'action' for the buttons
+                { data: 'total', name: 'total' },
+                { data: 'token_left', name: 'token_left' },
+                { data: 'date', name: 'date' },
+                { data: 'action', name: 'action', orderable: false, searchable: false }
             ],
         });
     });

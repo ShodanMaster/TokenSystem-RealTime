@@ -18,7 +18,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Rows will be populated by DataTables -->
                 </tbody>
             </table>
         </div>
@@ -32,7 +31,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: '{{ route('counter.getreport') }}', // Make sure this route is correctly defined
+                url: '{{ route('counter.getreport') }}',
                 type: 'GET',
             },
             columns: [

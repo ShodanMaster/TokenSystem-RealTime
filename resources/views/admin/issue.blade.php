@@ -1,6 +1,7 @@
 @extends('admin.layout')
 @section('content')
 
+    <h4>{{$date}}</h4>
     <div class="row">
         <div class="col-md-8">
             <h1>Total Issued Tokens: <span id="totalTokens">0</span></h1>
@@ -45,7 +46,6 @@
 
             setTimeout(() => {
                 window.Echo.channel('counterget').listen('.get', (e)=>{
-                    // console.log(e);
                     $('#lastWent').text(e.lastWent);
                     $('#tokenLeft').text(e.tokensLeft);
                 })
@@ -91,16 +91,13 @@
                     contentType: false,
                     processData: false,
                     success: function (response) {
-                        // console.log(response);
 
                         if (response.status === 200) {
                             $('#tokenForm')[0].reset();
-                            // Update UI with the total tokens and token left
                             updateTokenDisplay(response.data.total, response.data.total_left);
                         }
                     },
                     error: function(xhr, status, error) {
-                        // Handle errors such as network issues, or invalid response
                         console.error("Error: " + error);
                         alert('An error occurred: ' + error);
                     },

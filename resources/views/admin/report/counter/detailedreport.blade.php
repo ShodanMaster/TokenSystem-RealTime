@@ -38,13 +38,13 @@
         $('#counterReportTable').DataTable({
             processing: true,
             serverSide: true,
-            ajax: '{{ route("admin.getdetailedcounterreport", $counter->name) }}', // Ensure this route matches the route in your web.php
+            ajax: '{{ route("admin.getdetailedcounterreport", $counter->name) }}',
             columns: [
                 { data: 'name', name: 'name' },
                 { data: 'token_number', name: 'token_number' },
                 { data: 'date', name: 'date' },
             ],
-            order: [[2, 'desc'], [1, 'desc']], // Orders by date and token_number
+            order: [[2, 'desc'], [1, 'desc']],
         });
     });
     </script>

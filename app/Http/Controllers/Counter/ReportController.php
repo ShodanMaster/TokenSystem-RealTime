@@ -25,12 +25,12 @@ class ReportController extends Controller
         })
         ->latest()
         ->get()
-        ->groupBy('date') // Group by the date column
+        ->groupBy('date')
         ->map(function($groupedTokens) {
             return (object)[
-                'date' => $groupedTokens->first()->date, // Get the date for the group
-                'total' => $groupedTokens->count(), // Total count of tokens for that date
-                'id' => $groupedTokens->first()->date // Include an ID for detailed report
+                'date' => $groupedTokens->first()->date,
+                'total' => $groupedTokens->count(),
+                'id' => $groupedTokens->first()->date
             ];
         });
 
@@ -57,9 +57,8 @@ class ReportController extends Controller
             $tokens = Token::whereHas('counters', function ($query) {
                 $query->where('counter_id', Auth::guard('counter')->user()->id);
             })->whereBetween('created_at', [$startOfDay, $endOfDay])
-                        ->latest()
-                        ->get();
-            // dd($tokens);
+                ->latest()
+                ->get();
             if ($tokens) {
                 return view('counter.report.detailedreport', compact('tokens', 'date'));
             } else {

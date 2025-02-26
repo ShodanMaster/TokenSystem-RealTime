@@ -100,9 +100,8 @@
                 e.preventDefault();
                 var button = $(this);
                 var counterId = button.data('counter-id');
-                var currentStatus = button.data('closed');  // Get the current status (open/closed)
+                var currentStatus = button.data('closed');
 
-                // Determine the new status by toggling the current status
                 var newStatus = currentStatus ? 0 : 1;
 
                 console.log('Counter ID:', counterId);
@@ -123,8 +122,8 @@
                             url: "{{ route('admin.updatestatus') }}",
                             method: 'POST',
                             data: {
-                                counter_id: counterId,  // Include counter_id
-                                closed: newStatus,      // Send new status
+                                counter_id: counterId,
+                                closed: newStatus,
                                 _token: '{{ csrf_token() }}',
                             },
                             success: function(response) {

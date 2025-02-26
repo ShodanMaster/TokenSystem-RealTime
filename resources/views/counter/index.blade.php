@@ -33,7 +33,6 @@
 
             setTimeout(() => {
                 window.Echo.channel('adminevent').listen('.issued', (e)=>{
-                    // console.log(e);
                     $('#totalTokenIssued').text(e.totalTokens);
                     $('#tokensLeft').text(e.tokensLeft);
                 })
@@ -41,7 +40,6 @@
 
             setTimeout(() => {
                 window.Echo.channel('counterget').listen('.get', (e)=>{
-                    // console.log(e);
                     $('#tokensLeft').text(e.tokensLeft);
                 })
             }, 200);
@@ -51,8 +49,6 @@
                     url: "{{route('counter.windowload')}}",
                     success: function (response) {
                         // console.log(response);
-
-                        // updateTokenDisplay(response.data.total, response.data.token_number, response.data.total_left);
                         $('#totalTokenIssued').text(response.data.total);
                         $('#tokensLeft').text(response.data.total_left);
                         $('#counterToken').text("Token #" + response.data.token_number);
@@ -62,26 +58,22 @@
             $(document).on('click', '#getToken', function (e) {
                 e.preventDefault();
 
-                var counterId = "{{ encrypt(Auth::guard('counter')->user()->id) }}"; // Get the counter ID dynamically from the session or user
-                var tokenLabel = "#counterToken"; // Get the corresponding token label
+                var counterId = "{{ encrypt(Auth::guard('counter')->user()->id) }}";
+                var tokenLabel = "#counterToken";
 
                 $.ajax({
                     type: "GET",
-                    url: "{{route('counter.gettoken', ':id')}}".replace(':id', counterId),  // Replace counter ID dynamically in URL
+                    url: "{{route('counter.gettoken', ':id')}}".replace(':id', counterId),
                     success: function (response) {
-                        // console.log(response);
 
                         if (response.status === 200) {
-                            // Update the HTML elements with the new token data
                             $('#totalTokenIssued').text(response.data.total);
                             $('#tokensLeft').text(response.data.token_left);
                             $(tokenLabel).text("Token #" + response.data.last_went);
                         }
                     },
                     error: function(xhr, status, error) {
-                        // Handle error if no tokens are available
                         $('#tokensLeft').text('0');
-                        // $(tokenLabel).text("Token #0");
                         var errorResponse = JSON.parse(xhr.responseText);
                         Swal.fire({
                             icon: 'error',

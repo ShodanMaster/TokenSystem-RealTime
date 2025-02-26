@@ -13,7 +13,6 @@ class LoginController extends Controller
     }
 
     public function LoggingIn(Request $request){
-        // dd($request->all());
         $validated = $request->validate([
             'username' => 'required',
             'password' => 'required',

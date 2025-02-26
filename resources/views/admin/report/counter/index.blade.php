@@ -19,7 +19,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- This tbody will be populated by DataTables -->
                 </tbody>
             </table>
         </div>
@@ -30,18 +29,17 @@
     <script>
         $(document).ready(function() {
             $('#counterReportTable').DataTable({
-                processing: true,  // Show loading indicator
-                serverSide: true,  // Enable server-side processing
-                ajax: '{!! route('admin.getcounterreport') !!}', // The AJAX URL to fetch data
+                processing: true,
+                serverSide: true,
+                ajax: '{!! route('admin.getcounterreport') !!}',
                 columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex' }, // Auto-incrementing index column
-                    { data: 'name', name: 'name' },               // Counter name
-                    { data: 'tokens_count', name: 'tokens_count' }, // Token count
-                    { data: 'date', name: 'date' },              // Date
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+                    { data: 'name', name: 'name' },
+                    { data: 'tokens_count', name: 'tokens_count' },
+                    { data: 'date', name: 'date' },
                     {
                         data: null,
                         render: function(data, type, row) {
-                            // Render button with link to detailed report
                             return `<a href="{{ route('admin.detailedcounterreport', '') }}/${row.name}">
                                         <button class="btn btn-info">Detailed</button>
                                     </a>`;

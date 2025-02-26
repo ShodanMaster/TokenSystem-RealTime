@@ -21,12 +21,12 @@ class TokenReceived implements ShouldBroadcast
         $this->lastFiveData = $lastFiveData;
     }
 
-    // Broadcast to both admin and index page
+
     public function broadcastOn()
     {
         return [
-            new PrivateChannel('admin.notifications'), // Admin-specific
-            new Channel('index.notifications'), // Public for index page
+            new PrivateChannel('admin.notifications'),
+            new Channel('index.notifications'),
         ];
     }
 

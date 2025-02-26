@@ -58,8 +58,6 @@ class CounterController extends Controller
             $tokens = Token::whereDate('date', today())->get();
             $totalTokens = $tokens->count();
             $trueTokens = $tokens->where('status', true)->count();
-            // dd($totalTokens.' - ' .$trueTokens . ' = '. $totalTokens - $trueTokens);
-            // dd('TokensLeft'.$totalTokens - $trueTokens);
             $tokenLeft = $totalTokens - $trueTokens;
 
             $lastFiveTokens = DB::table('counter_token')
@@ -78,7 +76,6 @@ class CounterController extends Controller
 
             event(new CounterGet($tokenLeft, $pivot->pivot->last_went));
             event(new TokenReceived($lastFiveData));
-            // dd($pivot->pivot);
             return response()->json([
                 'status' => 200,
                 'message' => 'Token Retrieved',
@@ -101,7 +98,6 @@ class CounterController extends Controller
         $trueTokens = Token::whereDate('date', today())->where('status', true)->count();
         $totalTokens = Token::whereDate('date', today())->count();
         $lastWent = DB::table('counter_token')->whereDate('created_at', Carbon::today())->where('counter_id', Auth::guard('counter')->user()->id)->latest()->first();
-        // dd($lastWent);
         $tokensLeft = $totalTokens - $trueTokens;
 
         return response()->json([

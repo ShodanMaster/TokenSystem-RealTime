@@ -11,7 +11,6 @@ use Yajra\DataTables\Facades\DataTables;
 class CounterController extends Controller
 {
     public function index(){
-        // $counters = Counter::all();
         return view('admin.counter.index');
     }
 
@@ -36,7 +35,6 @@ class CounterController extends Controller
     }
 
     public function createCounter(){
-        // dd("inside");
         try{
             Counter::create([
                 'name' => $this->counterName(),
@@ -61,7 +59,6 @@ class CounterController extends Controller
             $counterId = decrypt($request->counter_id);
             $closed = $request->closed;
 
-            // Find the counter based on ID
             $counter = Counter::find($counterId);
 
             if (!$counter) {

@@ -8,7 +8,6 @@
         Detailed Report on {{$date}}
     </div>
     <div class="card-body">
-        <!-- Token Stats Section -->
         <div class="row mb-4">
             <div class="col-md-6 mb-3">
                 <div class="card shadow-sm p-3 text-center">
@@ -25,7 +24,6 @@
             </div>
         </div>
 
-        <!-- Counter Token Details Table -->
         <div class="table-responsive">
             <table id="tokenReportTable" class="table table-bordered table-striped table-hover">
                 <thead>
@@ -37,7 +35,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- DataTable will populate this dynamically -->
                 </tbody>
             </table>
         </div>
@@ -47,16 +44,16 @@
 @section('scripts')
     <script>
         $(document).ready(function() {
-            var date = "{{ $date }}"; // Get the date from the controller
+            var date = "{{ $date }}";
             $('#tokenReportTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{!! route('admin.getdetailedtokenreport', ['date' => $date]) !!}', // URL for AJAX request
+                ajax: '{!! route('admin.getdetailedtokenreport', ['date' => $date]) !!}',
                 columns: [
-                    { data: 'DT_RowIndex', name: 'DT_RowIndex' }, // Auto-increment index column
-                    { data: 'name', name: 'name' }, // Display token name
-                    { data: 'token_number', name: 'token_number' }, // Display token number
-                    { data: 'counter', name: 'counter' } // Display counter(s) (No Counter or list of counters)
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+                    { data: 'name', name: 'name' },
+                    { data: 'token_number', name: 'token_number' },
+                    { data: 'counter', name: 'counter' }
                 ]
             });
         });
