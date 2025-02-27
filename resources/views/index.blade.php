@@ -12,20 +12,23 @@
 <body>
 
     <div class="container my-5">
-        <h1 class="text-center mb-4">Token System</h1>
+        <div class="d-flex justify-content-between">
+            <h1 class="text-center mb-4">Token System</h1>
+            <h1>Total Tokens: <span id="totalTokenIssued">0</span></h1>
+        </div>
 
         <div class="row g-4">
             @forelse ($counters as $counter)
-                <div class="col-md-4 col-sm-6">
-                    <div class="card shadow-sm border-0 rounded text-center p-3">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold text-uppercase">{{ $counter->name }}</h5>
-                            <p class="token-number text-muted" data-counter-name="{{ $counter->name }}">Waiting...</p>
-                        </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="card shadow-sm border-0 rounded text-center p-3">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-uppercase">{{ $counter->name }}</h5>
+                        <p class="token-number text-muted" data-counter-name="{{ $counter->name }}">Waiting...</p>
                     </div>
                 </div>
+            </div>
             @empty
-                <h4 class="text-muted text-center">No Counters</h4>
+            <h4 class="text-muted text-center">No Counters</h4>
             @endforelse
         </div>
     </div>
@@ -37,14 +40,20 @@
     <script>
         $(document).ready(function(){
             setTimeout(() => {
+
+                window.Echo.channel('adminevent').listen('.issued', (e)=>{
+                    $('#totalTokenIssued').text(e.totalTokens);
+                })
+
                 window.Echo.channel('index.notifications').listen('.token.received', (e) => {
                     console.log(e);
-                    
+
                     if (e.lastFiveData) {
                         let latestToken = e.lastFiveData[0];
                         $(`.token-number[data-counter-name="${latestToken.counter}"]`).text(`Token: ${latestToken.token_number}`);
                     }
                 });
+
             }, 200);
 
             $.ajax({
@@ -56,6 +65,7 @@
                             let selector = `.token-number[data-counter-name="${item.counter}"]`;
                             $(selector).text(`Token: ${item.token}`);
                         });
+                        $('#totalTokenIssued').text(response.totalTokens);
                     }
                 }
             });
