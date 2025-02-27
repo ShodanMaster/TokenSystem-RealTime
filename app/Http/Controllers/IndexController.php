@@ -17,6 +17,7 @@ class IndexController extends Controller
     public function windowLoad(){
 
         $counters = Counter::where('closed', false)->get();
+        $totalTokens = Token::whereDate('date', today())->count();
 
         $latestTokens = DB::table('counter_token')
             ->join('counters', 'counter_token.counter_id', '=', 'counters.id')
@@ -41,6 +42,7 @@ class IndexController extends Controller
             'status' => 200,
             'message' => 'Data Found',
             'data' => $latestTokensArray,
+            'totalTokens' => $totalTokens,
         ]);
     }
 
