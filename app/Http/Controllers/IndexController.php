@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Counter;
+use App\Models\Token;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
