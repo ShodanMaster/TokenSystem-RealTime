@@ -15,16 +15,18 @@
         <h1 class="text-center mb-4">Token System</h1>
 
         <div class="row g-4">
-            @foreach ($counters as $counter)
-            <div class="col-md-4 col-sm-6">
-                <div class="card shadow-sm border-0 rounded text-center p-3">
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold text-uppercase">{{ $counter->name }}</h5>
-                        <p class="token-number text-muted" data-counter-name="{{ $counter->name }}">Waiting...</p>
+            @forelse ($counters as $counter)
+                <div class="col-md-4 col-sm-6">
+                    <div class="card shadow-sm border-0 rounded text-center p-3">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold text-uppercase">{{ $counter->name }}</h5>
+                            <p class="token-number text-muted" data-counter-name="{{ $counter->name }}">Waiting...</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            @endforeach
+            @empty
+                <h4 class="text-muted text-center">No Counters</h4>
+            @endforelse
         </div>
     </div>
 
